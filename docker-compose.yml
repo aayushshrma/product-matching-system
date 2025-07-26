@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+      - triton
+
+  mongodb:
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+
+  triton:
+    image: nvcr.io/nvidia/tritonserver:24.01-py3
+    shm_size: 1g
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+    volumes:
+      - ./model_repo:/models
+    command: ["tritonserver", "--model-repository=/models"]
+    ports:
+      - "8001:8001"   # gRPC
+      - "8002:8002"   # Metrics
+      - "8003:8003"   # Backend HTTP
