@@ -1,0 +1,42 @@
+# Ignore Python cache and virtual envs
+_pycache_/
+*.pyc
+*.pyo
+*.pyd
+TheUltimateEnv/
+venv/
+.env/
+
+# Ignore heavy model files (they're already mounted via volume to Triton)
+*.onnx
+*.plan
+*.pt
+*.pkl
+
+# Ignore image, video, and media assets
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.mp4
+*.avi
+*.mov
+*.zip
+
+# Ignore datasets or large generated files
+dataset/
+data/
+logs/
+
+# Ignore model_repo during app build (mounted separately in Triton container)
+model_repo/
+
+# Ignore IDE/config files
+.idea/
+.vscode/
+*.swp
+*.bak
+
+# Ignore system-specific metadata
+.DS_Store
+Thumbs.db
