@@ -1,0 +1,10 @@
+fastapi~=0.109.1
+motor~=3.7.1
+aiohttp~=3.12.14
+numpy~=1.26.2
+pillow~=11.3.0
+faiss-cpu~=1.11.0.post1
+requests~=2.31.0
+torch~=2.7.1
+transformers~=4.54.0
+uvicorn
