@@ -3,29 +3,43 @@ version: '3.8'
 services:
   app:
     build: .
+    container_name: fastapi_app
     ports:
-      - "8000:8000"
+      - "8003:8000"
     depends_on:
       - mongodb
       - triton
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+      - TRITON_URL=http://triton:8000
+    volumes:
+      -  .:/app
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
   mongodb:
     image: mongo:5.0
+    container_name: mongodb
+    restart: always
     ports:
       - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
 
   triton:
-    image: nvcr.io/nvidia/tritonserver:24.01-py3
+    image: nvcr.io/nvidia/tritonserver:24.05-py3
+    container_name: triton
+    restart: always
     shm_size: 1g
     ulimits:
       memlock: -1
       stack: 67108864
-    environment:
-      - CUDA_VISIBLE_DEVICES=0
     volumes:
       - ./model_repo:/models
     command: ["tritonserver", "--model-repository=/models"]
     ports:
+      - "8000:8000"   # HTTP for reference
       - "8001:8001"   # gRPC
       - "8002:8002"   # Metrics
-      - "8003:8003"   # Backend HTTP
+
+volumes:
+  mongo_data:
