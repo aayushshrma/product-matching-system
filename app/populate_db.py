@@ -11,17 +11,17 @@ products = [{"product_id": "001",
              "name": "Brown Boots",
              "price": 3999,
              "category": "Footwear",
-             "image_path": "app/sample/boots.jpg"},
+             "image_path": "sample/boots.jpg"},
             { "product_id": "002",
               "name": "Blue Hoodie",
               "price": 1499,
               "category": "Apparel",
-              "image_path": "app/sample/hoodie.jpg"},
+              "image_path": "sample/hoodie.jpg"},
             {"product_id": "003",
              "name": "Tablet",
              "price": 19999,
              "category": "Electronics",
-             "image_path": "app/sample/tablet.jpg"}]
+             "image_path": "sample/tablet.jpg"}]
 
 async def populate():
     for product in products:
