@@ -1,5 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-client = AsyncIOMotorClient("mongo://mongodb:27017")
+client = AsyncIOMotorClient("mongodb://localhost:27017")
 db = client.products
 
 async def get_product_metadata(product_id):

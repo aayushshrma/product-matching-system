@@ -14,7 +14,7 @@ async def process_image(image_bytes):
     image_array = np.expand_dims(image_array, axis=0)
 
     async with (aiohttp.ClientSession() as session):
-        async with session.post("http://triton:8000/v2/models/vision_model/infer",
+        async with session.post("http://localhost:8000/v2/models/vision_model/infer",
                                 json={"inputs": [{"name": "input_image",
                                                   "shape": [1, 3, 224, 224],
                                                   "datatype": "FP32",
@@ -32,13 +32,13 @@ async def process_text(input_text, tokenizer):
     attention_mask = inputs["attention_mask"].tolist()
 
     async with aiohttp.ClientSession() as session:
-        async with session.post("http://triton:8000/v2/models/text_model/infer",
+        async with session.post("http://localhost:8000/v2/models/text_model/infer",
                                 json={"inputs": [{"name": "input_ids",
-                                                  "shape": [77],
+                                                  "shape": [1, 77],
                                                   "datatype": "INT32",
-                                                  "data": input_ids[0]},
+                                                  "data": input_ids},
                                                  {"name": "attention_mask",
-                                                  "shape": [77],
+                                                  "shape": [1, 77],
                                                   "datatype": "INT32",
                                                   "data": attention_mask[0]}]}
                                 ) as resp:
