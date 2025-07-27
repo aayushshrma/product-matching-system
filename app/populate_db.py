@@ -8,15 +8,20 @@ from inference import process_image
 import asyncio
 
 products = [{"product_id": "001",
-             "name": "Red Sneakers",
-             "price": 1499,
+             "name": "Brown Boots",
+             "price": 3999,
              "category": "Footwear",
-             "image_path": "app/sample/red_shoe.jpg"},
+             "image_path": "app/sample/boots.jpg"},
             { "product_id": "002",
-              "name": "Black Hoodie",
-              "price": 1299,
+              "name": "Blue Hoodie",
+              "price": 1499,
               "category": "Apparel",
-              "image_path": "app/sample/black_hoodie.jpg"}]
+              "image_path": "app/sample/hoodie.jpg"},
+            {"product_id": "003",
+             "name": "Tablet",
+             "price": 19999,
+             "category": "Electronics",
+             "image_path": "app/sample/tablet.jpg"}]
 
 async def populate():
     for product in products:
