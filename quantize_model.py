@@ -9,7 +9,7 @@ print("Model Downloaded!")
 dummy_image = torch.randn(1, 3, 224, 224)
 torch.onnx.export(model.vision_model,
                   dummy_image,
-                  "clip_visual.onnx",
+                  "model.onnx",
                   input_names=["input_image"],
                   output_names=["embedding"],
                   dynamic_axes={"input_image": {0: "batch"}},
@@ -20,7 +20,7 @@ dummy_mask = torch.ones((1,77), dtype=torch.int64)
 
 torch.onnx.export(model.text_model,
                   (dummy_ids, dummy_mask),
-                  "clip_text.onnx",
+                  "model.onnx",
                   input_names=["input_ids", "attention_mask"],
                   output_names=["embedding"],
                   dynamic_axes={"input_ids": {0: "batch"}, "attention_mask": {0: "batch"}},
