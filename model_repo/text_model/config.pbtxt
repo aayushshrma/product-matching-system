@@ -1,0 +1,24 @@
+name: "text_model"
+platform: "tensorrt_plan"
+max_batch_size: 32
+
+input [
+  {
+    name: "input_ids"
+    data_type: TYPE_INT32
+    dims: [77]
+  },
+  {
+    name: "attention_mask"
+    data_type: TYPE_INT32
+    dims: [77]
+  }
+]
+
+output [
+  {
+    name: "embedding"
+    data_type: TYPE_FP32
+    dims: [512]
+  }
+]

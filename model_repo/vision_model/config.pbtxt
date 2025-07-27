@@ -1,0 +1,20 @@
+name: "vision_model"
+platform: "tensorrt_plan"
+max_batch_size: 32
+
+input [
+  {
+    name: "input_image"
+    data_type: TYPE_FP32
+    format: FORMAT_NCHW
+    dims: [3, 224, 224]
+  }
+]
+
+output [
+  {
+    name: "embedding"
+    data_type: TYPE_FP32
+    dims: [512]
+  }
+]
