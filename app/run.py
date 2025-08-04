@@ -31,8 +31,8 @@ async def check_triton():
 
 async def main():
     # Set environment variables
-    os.environ["MONGO_URI"] = "mongodb://localhost:27017"
-    os.environ["TRITON_URL"] = "http://localhost:8000"
+    # os.environ["MONGO_URI"] = "mongodb://localhost:27017"
+    # os.environ["TRITON_URL"] = "http://localhost:8000"
 
     # Service checks
     check_mongodb()

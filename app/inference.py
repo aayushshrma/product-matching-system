@@ -1,10 +1,14 @@
 import io
+import os
 import aiohttp
 import numpy as np
 from PIL import Image
 from transformers import CLIPTokenizer
 
 tokenizer = CLIPTokenizer.from_pretrained("openai/clip-vit-base-patch32")
+triton_url = os.environ["TRITON_URL"]
+infer_vision = f"{triton_url}/v2/models/vision_model/infer"
+infer_text = f"{triton_url}/v2/models/text_model/infer"
 
 
 async def process_image(image_bytes):
@@ -16,7 +20,7 @@ async def process_image(image_bytes):
     image_array = np.expand_dims(image_array, axis=0)
 
     async with (aiohttp.ClientSession() as session):
-        async with session.post("http://localhost:8000/v2/models/vision_model/infer",
+        async with session.post(infer_vision,
                                 json={"inputs": [{"name": "input_image",
                                                   "shape": [1, 3, 224, 224],
                                                   "datatype": "FP32",
@@ -36,7 +40,7 @@ async def process_text(input_text):
     attention_mask = inputs["attention_mask"].tolist()
 
     async with aiohttp.ClientSession() as session:
-        async with session.post("http://localhost:8000/v2/models/text_model/infer",
+        async with session.post(infer_text,
                                 json={"inputs": [{"name": "input_ids",
                                                   "shape": [1, 77],
                                                   "datatype": "INT64",
