@@ -37,10 +37,12 @@ async def match_product(file: UploadFile = File(), name: str = Form()):
                     </body>
                 </html>
                 """
-        await log_query(image_bytes=image_bytes, top_match_id=top_match_id)
+        await log_query(image_bytes=image_bytes, text_input=name,
+                        top_match_id=top_match_id)
         return HTMLResponse(content=html)
     except Exception as e:
-        await log_query(image_bytes=image_bytes, top_match_id=None, error=str(e))
+        await log_query(image_bytes=image_bytes, text_input=name,
+                        top_match_id=None, error=str(e))
         return HTMLResponse(content=f"<h2>Error:</h2><p>{str(e)}</p>", status_code=500)
 
 
@@ -81,32 +83,64 @@ async def root_form():
 
 @app.get("/logs", response_class=HTMLResponse)
 async def view_logs():
-    cursor = db.queries.find().sort("timestamp", -1) # newest first
-    logs = await cursor.to_list(length=100) # show last 50 logs
+    cursor = db.queries.find().sort("timestamp", -1)
+    logs = await cursor.to_list(length=100)
 
-    html = """
+    html_rows = ""
+    for log in logs:
+        timestamp = log.get("timestamp", "")
+        match_id = log.get("top_match_id", "N/A")
+        text = log.get("text", "")
+        error = log.get("error", "")
+        html_rows += f"""
+        <tr>
+            <td>{timestamp}</td>
+            <td>{match_id}</td>
+            <td>{text}</td>
+            <td>{error}</td>
+        </tr>
+        """
+
+    html = f"""
+    <!DOCTYPE html>
     <html>
     <head>
         <title>Query Logs</title>
         <style>
-            body { font-family: Arial; margin: 30px; }
-            table { border-collapse: collapse; width: 100%; }
-            th, td { padding: 8px 12px; border: 1px solid #ccc; }
-            th { background: #f4f4f4; }
-            pre { margin: 0; font-family: monospace; }
+            body {{
+                font-family: Arial, sans-serif;
+                margin: 40px;
+            }}
+            table {{
+                border-collapse: collapse;
+                width: 100%;
+            }}
+            th, td {{
+                border: 1px solid #ccc;
+                padding: 8px 12px;
+                text-align: left;
+            }}
+            th {{
+                background-color: #f4f4f4;
+            }}
+            tr:nth-child(even) {{
+                background-color: #f9f9f9;
+            }}
         </style>
     </head>
     <body>
         <h2>Product Matching Query Logs</h2>
         <table>
-            <tr><th>Timestamp</th><th>Match ID</th><th>Error</th></tr>
+            <tr>
+                <th>Timestamp</th>
+                <th>Match ID</th>
+                <th>Description</th>
+                <th>Error</th>
+            </tr>
+            {html_rows}
+        </table>
+    </body>
+    </html>
     """
 
-    for log in logs:
-        timestamp = log.get("timestamp", "")
-        match_id = log.get("top_match_id", "N/A")
-        error = log.get("error", "")
-        html += f"<tr><td>{timestamp}</td><td>{match_id}</td><td><pre>{error}</pre></td></tr>"
-
-    html += "</table></body></html>"
     return HTMLResponse(content=html)

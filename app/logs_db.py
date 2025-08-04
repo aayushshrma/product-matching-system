@@ -6,9 +6,10 @@ import os
 client = AsyncIOMotorClient(os.environ["MONGO_URI"])
 db = client.logs
 
-async def log_query(image_bytes, top_match_id, error=None):
+async def log_query(image_bytes, text_input, top_match_id, error=None):
     log_entry = {"timestamp": datetime.datetime.now(),
                  "input": base64.b64encode(image_bytes).decode('utf-8'),
+                 "text": text_input,
                  "top_match_id": top_match_id,
                  "error": error}
 

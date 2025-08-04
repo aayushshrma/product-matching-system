@@ -23,7 +23,13 @@ products = [{"product_id": "001",
              "name": "Table",
              "price": 14999,
              "category": "Furniture",
-             "image_path": "catalog/table.jpg"}]
+             "image_path": "catalog/table.jpg"},
+            {"product_id": "005",
+             "name": "Phone",
+             "price": 49999,
+             "category": "Electronics",
+             "image_path": "catalog/phone.jpg"}
+            ]
 
 async def populate():
     for product in products:

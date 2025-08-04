@@ -4,6 +4,10 @@ import uvicorn
 import socket
 import httpx
 
+# Set environment variables
+os.environ["MONGO_URI"] = "mongodb://localhost:27017"
+os.environ["TRITON_URL"] = "http://localhost:8000"
+
 from vector_db import reset_faiss_index
 from metadata_db import clear_catalog
 from populate_db import populate
@@ -30,9 +34,6 @@ async def check_triton():
         raise RuntimeError(f"❌ Triton server is not running or not healthy: {e}")
 
 async def main():
-    # Set environment variables
-    # os.environ["MONGO_URI"] = "mongodb://localhost:27017"
-    # os.environ["TRITON_URL"] = "http://localhost:8000"
 
     # Service checks
     check_mongodb()
