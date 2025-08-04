@@ -2,7 +2,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import datetime
 import base64
 
-client = AsyncIOMotorClient("mongo://mongodb:27017")
+client = AsyncIOMotorClient("mongodb://localhost:27017")
 db = client.logs
 
 async def log_query(image_bytes, top_match_id, error=None):
