@@ -17,7 +17,7 @@ services:
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
   mongodb:
-    image: mongo:5.0
+    image: mongo:8.0.12
     container_name: mongodb
     restart: always
     ports:
@@ -26,13 +26,15 @@ services:
       - mongo_data:/data/db
 
   triton:
-    image: nvcr.io/nvidia/tritonserver:24.05-py3
+    image: nvcr.io/nvidia/tritonserver:25.05-py3
     container_name: triton
     restart: always
     shm_size: 1g
     ulimits:
       memlock: -1
       stack: 67108864
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
     volumes:
       - ./model_repo:/models
     command: ["tritonserver", "--model-repository=/models"]
