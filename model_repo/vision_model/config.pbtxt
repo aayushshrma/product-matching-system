@@ -15,6 +15,6 @@ output [
   {
     name: "embedding"
     data_type: TYPE_FP32
-    dims: [50, 768]
+    dims: [512]
   }
 ]
