@@ -10,4 +10,4 @@ def test_match(image_path):
 
 
 if __name__ == "__main__":
-    test_match("sample/boots.jpg")
+    test_match("catalog/boots.jpg")
