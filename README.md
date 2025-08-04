@@ -1,121 +1,69 @@
 # Product Matching System
 
-This project implements an end-to-end image and text product matching system using FastAPI, Triton Inference Server, ONNX models, MongoDB, and Docker.
+This is a multimodal product matching system that uses image and text embeddings to identify the closest matching product from a catalog.
 
----
+## Features
 
-## 🧱 Project Structure
+- Upload product image and description through a web interface
+- Embeds input image using CLIP-based vision model via NVIDIA Triton Inference Server
+- Embeds input text using CLIP tokenizer + text model via Triton
+- Combines both embeddings and performs nearest neighbor search with FAISS
+- Retrieves matching metadata from MongoDB
+- Logs each match query with image and results
+- Simple HTML UI for `/` and `/logs` routes
 
-```
-product-matching-system/
-├── app/
-│   ├── main.py                  # FastAPI application entry point
-│   ├── inference.py             # Inference logic for image & text
-│   ├── populate_db.py           # Populates the DB with embeddings
-│   ├── logs_db.py               # Handles logging
-│   └── metadata_db.py           # Handles product metadata
-│
-├── model_repo/
-│   ├── text_model/
-│   │   └── 1/
-│   │       ├── model.onnx
-│   │       └── config.pbtxt
-│   └── vision_model/
-│       └── 1/
-│           ├── model.onnx
-│           └── config.pbtxt
-│
-├── quantize_model.py           # Optional quantization script
-├── text_model.plan             # Optional plan file (for TensorRT)
-├── requirements.txt
-├── docker-compose.yml
-├── Dockerfile
-└── README.md
-```
+## Tech Stack
 
----
+- **FastAPI** for backend server
+- **MongoDB** for catalog and query logs
+- **NVIDIA Triton Inference Server** to host quantized ONNX models
+- **FAISS** for vector similarity search
+- **Docker Compose** for service orchestration
 
-## 🧪 Requirements
+## Setup
 
-- Docker
-- Python 3.11+
-- NVIDIA GPU (optional for GPU acceleration)
-- MongoDB
-- Triton Inference Server
+### Prerequisites
 
----
+- Docker + NVIDIA Container Toolkit
+- Python 3.12 (for running local utilities)
+- Triton image: `nvcr.io/nvidia/tritonserver:25.05-py3`
+- MongoDB image: `mongo:8.0.12`
 
-## 🚀 Setup and Run
-
-1. **Build and Start Services**
+### Run the System
 
 ```bash
 docker compose up --build
 ```
 
-2. **Verify Containers**
+Then open `http://localhost:8003` in your browser to use the matcher.
 
-```bash
-docker ps
+### Project Structure
+
+```
+app/
+├── main.py                 # FastAPI routes & HTML interface
+├── inference.py            # Triton inference functions
+├── vector_db.py            # FAISS index management
+├── metadata_db.py          # MongoDB interface for catalog
+├── logs_db.py              # MongoDB interface for query logs
+├── populate_db.py          # Adds image/text embeddings to FAISS + MongoDB
+├── run.py          # main run script
+model_repo/
+├── vision_model/
+│   └── config.pbtxt
+├── text_model/
+│   └── config.pbtxt
+catalog/
+├── boots.jpg               # Sample images
+├── hoodie.jpg
+├── tablet.jpg
+├── table.jpg
 ```
 
-3. **Run Population Script**
+## Useful Endpoints
 
-```bash
-docker exec -it fastapi_app python app/populate_db.py
-```
-
-This script loads embeddings for all product entries using your ONNX models and stores them in MongoDB.
+- `/` – Upload product image + text via form
+- `/match` – POST handler for matching product
+- `/logs` – View recent matching logs in table
 
 ---
-
-## ⚙️ Environment Variables
-
-Set inside `docker-compose.yml`:
-
-```yaml
-environment:
-  - MONGO_URI=mongodb://mongodb:27017
-  - TRITON_URL=http://triton:8000
-```
-
----
-
-## 🔌 Model Input/Output
-
-### Image Model (`vision_model`)
-- Input: `input_image` shape `[1, 3, 224, 224]`, dtype: FP32
-- Output: `embedding` shape `[1, 512]`, dtype: FP32
-
-### Text Model (`text_model`)
-- Input: `input_ids`, `attention_mask`, shape `[77]`, dtype: INT32
-- Output: `embedding`, shape `[1, 512]`, dtype: FP32
-
----
-
-## ✅ Notes
-
-- Use `.dockerignore` to exclude large or unnecessary local files.
-- `.onnx` files are served by Triton.
-- `config.pbtxt` must match model's actual input/output signatures.
-
----
-
-## 🧠 Inference Logic
-
-Implemented in `inference.py`. Communicates with Triton at:
-```
-http://triton:8000/v2/models/{model_name}/infer
-```
-
-- Text and image embeddings are returned as NumPy arrays.
-- These embeddings are then stored in MongoDB or compared for similarity.
-
----
-
-## 📫 API (Optional)
-
-If you’re running FastAPI for inference, it will be served at:
-```
-http://localhost:8003/
-```
